@@ -1,0 +1,53 @@
+﻿using FutbolApp.Helpers;
+using FutbolApp.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
+
+namespace FutbolApp.Pages
+{
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class EquipoPage : ContentPage
+    {
+        Equipo Equipo;
+        public EquipoPage(Equipo equipo)
+        {
+            InitializeComponent();
+            Equipo = equipo;
+            this.BindingContext = equipo;
+        }
+        private async void btnEscudo_Clicked(object sender, EventArgs e)
+        {
+            var escudo = await ImageHelper.SeleccionarImagen();
+            Equipo.Escudo = escudo.Path;
+            imgEscudo.Source = ImageSource.FromFile(escudo.Path);
+        }
+        private async void Guardar_Clicked(object sender, EventArgs e)
+        {
+            if (Equipo.ID > 0) App.BaseDatos.ActualizarEquipo(Equipo);
+            else App.BaseDatos.AgregarEquipo(Equipo);
+            await DisplayAlert("FutbolApp", "Equipo registrado con éxito", "OK");
+        }
+        private async void Eliminar_Clicked(object sender, EventArgs e)
+        {
+            if (await DisplayAlert("Eliminar", "¿Deseas eliminar el equipo?", "Si", "No"))
+                App.BaseDatos.EliminarEquipo(Equipo);
+            await DisplayAlert("FutbolApp", "Equipo eliminado con éxito", "OK");
+            await Navigation.PopAsync();
+        }
+        private async void lsvJugadores_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            Jugador jugador = (Jugador)e.SelectedItem;
+            await Navigation.PushAsync(new JugadorEquipoPage(jugador, Equipo, false));
+        }
+        private async void Agregar_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new ListaJugadoresPage(Equipo));
+        }
+    }
+}

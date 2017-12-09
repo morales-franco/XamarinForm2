@@ -23,7 +23,9 @@ namespace FutbolApp.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
-            LoadApplication(new App());
+
+            string rutaBD = Helpers.FileHelper.ObtenerRutaLocal("futbol.db3");
+            LoadApplication(new App(rutaBD, new SQLite.Net.Platform.XamarinIOS.SQLitePlatformIOS()));
 
             return base.FinishedLaunching(app, options);
         }

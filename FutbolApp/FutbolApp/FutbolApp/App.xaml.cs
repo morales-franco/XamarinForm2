@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FutbolApp.Repository;
+using SQLite.Net.Interop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,11 +11,21 @@ namespace FutbolApp
 {
     public partial class App : Application
     {
-        public App()
-        {
-            InitializeComponent();
+        public static BaseDatos BaseDatos { get; set; }
 
-            MainPage = new FutbolApp.MainPage();
+        //public App()
+        //{
+        //    InitializeComponent();
+
+        //    MainPage = new FutbolApp.MainPage();
+        //}
+
+        public App(string rutaBD, ISQLitePlatform plataforma)
+        {
+            BaseDatos = new BaseDatos(plataforma, rutaBD);
+            BaseDatos.Conectar();
+            InitializeComponent();
+            MainPage = new NavigationPage(new FutbolApp.Pages.MenuPage());
         }
 
         protected override void OnStart()
